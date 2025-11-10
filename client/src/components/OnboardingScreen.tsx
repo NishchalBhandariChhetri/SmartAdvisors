@@ -68,7 +68,7 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
 
   const handleNext = () => {
-    if (step < 3) {
+    if (step < 4) {
       setStep(step + 1);
     } else {
       onComplete({ preferences }); //Sending the data out
@@ -78,7 +78,8 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
   const canProceed = () => {
     if (step === 1) return true;
     if (step === 2) return transcript !== null && preferences.classesTaken;
-    if (step === 3) return preferences.assessmentType && preferences.attendanceRequired && preferences.classSize;
+    if (step === 3) return preferences.classesTaken.length > 0;
+    if (step === 4) return preferences.assessmentType && preferences.attendanceRequired && preferences.classSize;
     return false;
   };
 
@@ -86,19 +87,21 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            {[1,2,3].map((num) => (
-              <div key={num} className="flex items-center flex-1">
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${
-                    step >= num
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-300 text-gray-600'
-                  }`}
-                >
-                  {num}
+          <div className="flex items-center mb-4">
+            {[1,2,3,4].map((num) => (
+              <div key={num} className="flex items-center" style={{ flex: num < 4 ? '1' : '0 0 auto' }}>
+                <div className="flex flex-col items-center" style={{ width: '40px' }}>
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${
+                      step >= num
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-300 text-gray-600'
+                    }`}
+                  >
+                    {num}
+                  </div>
                 </div>
-                {num < 3 && (
+                {num < 4 && (
                   <div
                     className={`flex-1 h-1 mx-2 transition-all ${
                       step > num ? 'bg-blue-600' : 'bg-gray-300'
@@ -108,10 +111,15 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
               </div>
             ))}
           </div>
-          <div className="flex justify-between text-sm text-gray-600">
-            <span>Disclaimer</span>
-            <span>Transcript</span>
-            <span>Preferences</span>
+          <div className="flex items-center">
+            {['Disclaimer', 'Transcript', 'Classes', 'Preferences'].map((label, idx) => (
+              <div key={label} className="flex items-center" style={{ flex: idx < 3 ? '1' : '0 0 auto' }}>
+                <div className="text-sm text-gray-600 text-center" style={{ width: '40px' }}>
+                  {label}
+                </div>
+                {idx < 3 && <div className="flex-1 mx-2" />}
+              </div>
+            ))}
           </div>
         </div>
 
@@ -197,8 +205,53 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
   </div>
         )}
 
-        {/* Step 3: Learning Preferences */}
+        {/* Step 3: Classes Confirmation */}
         {step === 3 && (
+          <div>
+            <div className="flex items-center mb-6">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                <CheckCircle2 className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Your Classes</h2>
+                <p className="text-gray-600">Review the classes we found from your transcript</p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg border-2 border-gray-200 p-6 max-h-96 overflow-y-auto">
+              {preferences.classesTaken && preferences.classesTaken.length > 0 ? (
+                <div className="grid grid-cols-1 gap-3">
+                  {preferences.classesTaken.map((className, index) => (
+                    <div
+                      key={index}
+                      className="p-4 rounded-lg border-2 border-blue-100 bg-blue-50 flex items-center"
+                    >
+                      <CheckCircle2 className="w-5 h-5 text-blue-600 mr-3 flex-shrink-0" />
+                      <span className="font-medium text-gray-900">{className}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p>No classes detected. Please go back and upload your transcript.</p>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-6 bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+              <h3 className="font-semibold text-green-800 mb-2">
+                {preferences.classesTaken.length} {preferences.classesTaken.length === 1 ? 'class' : 'classes'} found
+              </h3>
+              <p className="text-sm text-green-700">
+                We'll use this information to match you with appropriate professors and courses.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Step 4: Learning Preferences */}
+        {step === 4 && (
           <div>
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
@@ -296,7 +349,7 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
           >
-            {step === 3 ? 'Complete Setup' : 'Next'}
+            {step === 4 ? 'Complete Setup' : 'Next'}
             <ChevronRight className="w-4 h-4 ml-2" />
           </button>
         </div>
