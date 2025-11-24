@@ -28,7 +28,7 @@ function App() {
           onComplete={(data) => {
             SetUserData(data);
             // Run the recomendation algorithm here?
-            setAppState('dashboard'); //temporarily changing from dashboard to onboardign
+            setAppState('dashboard');
           }}
         />
       )}
