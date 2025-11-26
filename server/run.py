@@ -4,7 +4,7 @@ app = create_app()
 
 if __name__ == "__main__":
     # debug True for local development
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    app.run(host="127.0.0.1", port=8000, debug=True)
 
 # Running the python script on a virtual enviormnet backend
 # python3 -m venv venv (not required if you already have a venv)
