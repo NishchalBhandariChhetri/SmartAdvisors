@@ -10,13 +10,24 @@ type PreferencesType = {
   assessmentType: string;
   attendanceRequired: string;
   classSize: string;
-  classesTaken: String[]
+  classesTaken: string[];
 };
+
+interface RecommendationData {
+  courseCode: string;
+  courseName: string;
+  professors: any[];
+}
+
 type AppState = 'welcome' | 'onboarding' | 'dashboard';
 
 function App() {
   const [appState, setAppState] = useState<AppState>('welcome');
-  const [userData, SetUserData] = useState<{ preferences: PreferencesType } | null>(null)
+  const [userData, SetUserData] = useState<{
+  preferences: PreferencesType;
+  recommendations: RecommendationData[];
+} | null>(null);
+
 
   return (
     <>
@@ -27,7 +38,6 @@ function App() {
         <OnboardingScreen
           onComplete={(data) => {
             SetUserData(data);
-            // Run the recomendation algorithm here?
             setAppState('dashboard');
           }}
         />

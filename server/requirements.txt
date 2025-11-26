@@ -1,5 +1,11 @@
 # ======== Data Processing & Scraping ========
+flask
+flask-cors
+flask-migrate
+flask-sqlalchemy
+python-dotenv
+werkzeug
 pdfplumber
-requests
-beautifulsoup4
 spacy
+beautifulsoup4
+requests

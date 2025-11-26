@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from parse_transcript import extract_all_courses
+from .parse_transcript import extract_all_courses 
 
 def get_department_courses(department):
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -113,22 +113,26 @@ def print_prof_recs_for_course(course_code, course_name, completed):
             sem_label = f"{year} {sem}" if year and sem else "n/a"
             print(f"        - {prof} | Recent GPA: {gpa} | Term: {sem_label}")
 
-if __name__ == "__main__":
+def run_local_demo():
+    """Run this for local testing with sample_transcript.pdf"""
     dept = 'CE'
     all_courses = get_department_courses(dept)
     print(f"Loaded {len(all_courses)} course/professor offerings for {dept} department.")
-    print(all_courses[0] if all_courses else "No courses found.")
+    
     script_dir = os.path.dirname(os.path.abspath(__file__))
     pdf_path = os.path.abspath(os.path.join(script_dir, '../../../data/sample_transcript.pdf'))
+    
     if not os.path.exists(pdf_path):
         print(f"PDF transcript not found at: {pdf_path}")
         completed = []
     else:
         completed = extract_all_courses(pdf_path)
-        print(f"Completed courses from transcript: {completed}")
+    
+    print(f"Completed courses from transcript: {completed}")
+    
     eligible = filter_eligible_courses_unique(all_courses, completed)
     print(f"Eligible courses (not yet taken, prereqs/coreqs satisfied): {len(eligible)})")
-
+    
     for code, e in list(eligible.items()):
         print(f"{code}: {e['Course_Name']}")
         co_req = e.get('Co_Requisites', '').strip()
@@ -138,4 +142,16 @@ if __name__ == "__main__":
             if remaining_coreqs:
                 print(f"    Co-requisite(s): {', '.join(remaining_coreqs)}")
         print_prof_recs_for_course(code, e['Course_Name'], completed)
+
+if __name__ == "__main__":
+    run_local_demo()
+
+# Export functions for API use
+__all__ = [
+    'get_department_courses',
+    'filter_eligible_courses_unique', 
+    'get_professor_offerings_for_course',
+    'extract_all_courses',
+    'normalize_code'
+]
 

@@ -1,10 +1,12 @@
-import { Star, Users, Calendar, TrendingUp, Clock, Award, BookOpen, Filter } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Star, Users, Calendar, TrendingUp, Clock, Award, BookOpen, Loader2 } from 'lucide-react';
 
 type PreferencesType = {
   preferredDays: string[];
   assessmentType: string;
   attendanceRequired: string;
   classSize: string;
+  classesTaken: string[];
 };
 
 interface Professor {
@@ -28,119 +30,68 @@ interface ClassData {
 }
 
 interface RecommendationDashboardProps {
-  userData: { preferences: PreferencesType };
+  userData: {
+    preferences: PreferencesType;
+    recommendations: ClassData[];
+  };
 }
 
 export default function RecommendationDashboard({ userData }: RecommendationDashboardProps) {
-  console.log('User Data from onboarding:', userData);
-  
-  const mockClasses: ClassData[] = [
-    {
-      courseCode: 'CE 201',
-      courseName: 'Fluid Mechanics',
-      professors: [
-        {
-          id: '1',
-          name: 'Dr. Sarah Chen',
-          rating: 4.8,
-          reviewCount: 234,
-          difficulty: 'Moderate',
-          matchScore: 98,
-          schedule: 'Mon/Wed 2:00-3:30 PM',
-          classSize: 'Small (25)',
-          assessmentType: 'Assignment Heavy',
-          attendance: 'Not Required',
-          tags: ['Clear Explanations', 'Helpful', 'Fair Grader'],
-        },
-        {
-          id: '4',
-          name: 'Prof. James Liu',
-          rating: 4.5,
-          reviewCount: 156,
-          difficulty: 'Challenging',
-          matchScore: 89,
-          schedule: 'Tue/Thu 1:00-2:30 PM',
-          classSize: 'Medium (35)',
-          assessmentType: 'Exam Heavy',
-          attendance: 'Required',
-          tags: ['Thorough', 'Detailed Notes', 'Tough Grader'],
-        },
-      ],
-    },
-    {
-      courseCode: 'CE 305',
-      courseName: 'Engineering Graphics and Drawing',
-      professors: [
-        {
-          id: '2',
-          name: 'Prof. Michael Rodriguez',
-          rating: 4.6,
-          reviewCount: 189,
-          difficulty: 'Moderate',
-          matchScore: 95,
-          schedule: 'Tue/Thu 10:00-11:30 AM',
-          classSize: 'Medium (40)',
-          assessmentType: 'Balanced',
-          attendance: 'Required',
-          tags: ['Engaging', 'Real-world Examples', 'Responsive'],
-        },
-        {
-          id: '5',
-          name: 'Dr. Amanda Foster',
-          rating: 4.7,
-          reviewCount: 201,
-          difficulty: 'Easy',
-          matchScore: 91,
-          schedule: 'Mon/Wed 9:00-10:30 AM',
-          classSize: 'Large (50)',
-          assessmentType: 'Project Heavy',
-          attendance: 'Not Required',
-          tags: ['Creative Projects', 'Flexible', 'Supportive'],
-        },
-      ],
-    },
-    {
-      courseCode: 'CE 401',
-      courseName: 'Soil Mechanics',
-      professors: [
-        {
-          id: '3',
-          name: 'Dr. Emily Watson',
-          rating: 4.9,
-          reviewCount: 312,
-          difficulty: 'Challenging',
-          matchScore: 92,
-          schedule: 'Mon/Wed 4:00-5:30 PM',
-          classSize: 'Small (30)',
-          assessmentType: 'Assignment Heavy',
-          attendance: 'Not Required',
-          tags: ['Industry Expert', 'Practical Projects', 'Inspiring'],
-        },
-        {
-          id: '6',
-          name: 'Prof. David Kumar',
-          rating: 4.4,
-          reviewCount: 178,
-          difficulty: 'Moderate',
-          matchScore: 87,
-          schedule: 'Tue/Thu 3:00-4:30 PM',
-          classSize: 'Medium (35)',
-          assessmentType: 'Balanced',
-          attendance: 'Required',
-          tags: ['Organized', 'Clear Syllabus', 'Approachable'],
-        },
-      ],
-    },
-  ];
+  const [classes, setClasses] = useState<ClassData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (userData?.recommendations) {
+      setClasses(userData.recommendations);
+      console.log(userData);
+      console.log(userData.recommendations);
+      setIsLoading(false);
+    }
+  }, [userData]);
+
+  const visibleClasses = classes.filter((c) => c.professors.length > 0);
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty.toLowerCase()) {
-      case 'easy': return 'text-green-700 bg-green-50';
-      case 'moderate': return 'text-yellow-700 bg-yellow-50';
-      case 'challenging': return 'text-orange-700 bg-orange-50';
-      default: return 'text-gray-700 bg-gray-50';
+      case 'easy':
+        return 'text-green-700 bg-green-50';
+      case 'moderate':
+        return 'text-yellow-700 bg-yellow-50';
+      case 'challenging':
+        return 'text-orange-700 bg-orange-50';
+      default:
+        return 'text-gray-700 bg-gray-50';
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 text-lg">Loading your recommendations...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
+        <div className="bg-white rounded-xl shadow-lg p-8 max-w-md">
+          <div className="text-red-600 text-center mb-4">
+            <Award className="w-12 h-12 mx-auto mb-2" />
+            <h2 className="text-xl font-bold">Error Loading Recommendations</h2>
+          </div>
+          <p className="text-gray-600 text-center">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const totalCourses = visibleClasses.length;
+  const totalProfessors = visibleClasses.reduce((sum, c) => sum + c.professors.length, 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
@@ -175,8 +126,8 @@ export default function RecommendationDashboard({ userData }: RecommendationDash
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Courses Analyzed</p>
-                <p className="text-2xl font-bold text-gray-900">12</p>
+                <p className="text-sm text-gray-600 mb-1">Eligible Courses</p>
+                <p className="text-2xl font-bold text-gray-900">{totalCourses}</p>
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                 <BookOpen className="w-6 h-6 text-blue-600" />
@@ -187,8 +138,8 @@ export default function RecommendationDashboard({ userData }: RecommendationDash
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Matches Found</p>
-                <p className="text-2xl font-bold text-gray-900">24</p>
+                <p className="text-sm text-gray-600 mb-1">Professor Options</p>
+                <p className="text-2xl font-bold text-gray-900">{totalProfessors}</p>
               </div>
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                 <TrendingUp className="w-6 h-6 text-green-600" />
@@ -197,74 +148,95 @@ export default function RecommendationDashboard({ userData }: RecommendationDash
           </div>
         </div>
 
-        <div className="overflow-x-auto pb-4">
-          <div className="flex gap-6 min-w-min">
-            {mockClasses.map((classData) => (
-              <div
-                key={classData.courseCode}
-                className="flex-shrink-0 w-96 bg-white rounded-xl shadow-sm border border-gray-100 p-6"
-              >
-                <div className="mb-6 pb-4 border-b">
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">{classData.courseCode}</h3>
-                  <p className="text-gray-600">{classData.courseName}</p>
-                  <p className="text-sm text-blue-600 mt-2 font-medium">
-                    {classData.professors.length} Professor{classData.professors.length !== 1 ? 's' : ''} Available
-                  </p>
-                </div>
-
-                <div className="space-y-4">
-                  {classData.professors.map((professor) => (
-                    <div
-                      key={professor.id}
-                      className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                    >
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <h4 className="font-bold text-gray-900 mb-1">{professor.name}</h4>
-                          <div className="flex items-center gap-1">
-                            <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                            <span className="font-semibold text-gray-900">{professor.rating}</span>
-                            <span className="text-xs text-gray-500">({professor.reviewCount})</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2 mb-3">
-                        <div className="flex items-start gap-2">
-                          <BookOpen className="w-3 h-3 text-gray-400 mt-1 flex-shrink-0" />
-                          <p className="text-xs text-gray-700">{professor.assessmentType}</p>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <Calendar className="w-3 h-3 text-gray-400 mt-1 flex-shrink-0" />
-                          <p className="text-xs text-gray-700">{professor.attendance}</p>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap gap-1 mb-3">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(professor.difficulty)}`}>
-                          {professor.difficulty}
-                        </span>
-                        {professor.tags.slice(0, 2).map((tag, index) => (
-                          <span key={index} className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-
-                      <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm">
-                        View Details
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+        {visibleClasses.length === 0 ? (
+          <div className="bg-white rounded-xl shadow-sm p-12 text-center">
+            <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-900 mb-2">No Recommendations Available</h3>
+            <p className="text-gray-600">
+              You may have completed all available courses, or there might be an issue with your transcript.
+            </p>
           </div>
-        </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto pb-4">
+              <div className="flex gap-6 min-w-min">
+                {visibleClasses.map((classData) => (
+                  <div
+                    key={classData.courseCode}
+                    className="flex-shrink-0 w-96 bg-white rounded-xl shadow-sm border border-gray-100 p-6"
+                  >
+                    <div className="mb-6 pb-4 border-b">
+                      <h3 className="text-xl font-bold text-gray-900 mb-1">{classData.courseCode}</h3>
+                      <p className="text-gray-600">{classData.courseName}</p>
+                      <p className="text-sm text-blue-600 mt-2 font-medium">
+                        {classData.professors.length} Professor{classData.professors.length !== 1 ? 's' : ''}
+                      </p>
+                    </div>
 
-        <div className="text-center text-sm text-gray-500 mt-4">
-          ← Scroll to see more classes →
-        </div>
+                    {/* NEW: Scrollable professor list with a fixed height */}
+                    <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
+                      {classData.professors.map((professor) => (
+                        <div
+                          key={professor.id}
+                          className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                        >
+                          <div className="flex items-start justify-between mb-3">
+                            <div>
+                              <h4 className="font-bold text-gray-900 mb-1">{professor.name}</h4>
+                              <div className="flex items-center gap-1">
+                                <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                                <span className="font-semibold text-gray-900">{professor.rating}</span>
+                                <span className="text-xs text-gray-500">({professor.reviewCount})</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2 mb-3">
+                            <div className="flex items-start gap-2">
+                              <BookOpen className="w-3 h-3 text-gray-400 mt-1 flex-shrink-0" />
+                              <p className="text-xs text-gray-700">{professor.assessmentType}</p>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <Calendar className="w-3 h-3 text-gray-400 mt-1 flex-shrink-0" />
+                              <p className="text-xs text-gray-700">{professor.schedule}</p>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <Clock className="w-3 h-3 text-gray-400 mt-1 flex-shrink-0" />
+                              <p className="text-xs text-gray-700">{professor.attendance}</p>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-wrap gap-1 mb-3">
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(
+                                professor.difficulty
+                              )}`}
+                            >
+                              {professor.difficulty}
+                            </span>
+                            {professor.tags.slice(0, 2).map((tag, index) => (
+                              <span key={index} className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+
+                          <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm">
+                            View Details
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="text-center text-sm text-gray-500 mt-4">
+              ← Scroll to see more classes →
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
