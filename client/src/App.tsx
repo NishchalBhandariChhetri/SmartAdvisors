@@ -9,6 +9,8 @@ import RecommendationDashboard from './components/RecommendationDashboard';
 // Use localhost for local development
 const API_URL = 'http://127.0.0.1:8000';
 
+// link to run locally: http://localhost:5173/
+
 interface ApiRecommendationResponse {
   success: boolean;
   recommendations: any[];

@@ -59,33 +59,33 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
   const totalCourses = visibleClasses.length;
   const totalProfessors = visibleClasses.reduce((sum, c) => sum + c.professors.length, 0);
 
-  // --- COLOR HELPERS ---
+  // --- DARK MODE COLORS ---
   const getDifficultyColor = (difficulty: string) => {
-    if (!difficulty) return 'text-[#001BB7]/60 bg-[#F5F1DC] border-[#001BB7]/20';
+    if (!difficulty) return 'text-slate-300 bg-slate-800/50 border-slate-700';
     const d = difficulty.toLowerCase();
-    if (d.includes('easy')) return 'text-[#0046FF] bg-[#0046FF]/10 border-[#0046FF]/20';
-    if (d.includes('medium') || d.includes('moderate')) return 'text-[#FF8040] bg-[#FF8040]/10 border-[#FF8040]/20';
-    if (d.includes('hard') || d.includes('challenging')) return 'text-red-600 bg-red-50 border-red-200';
-    return 'text-[#001BB7]/60 bg-[#F5F1DC] border-[#001BB7]/20';
+    if (d.includes('easy')) return 'text-emerald-300 bg-emerald-900/40 border-emerald-800';
+    if (d.includes('medium') || d.includes('moderate')) return 'text-amber-300 bg-amber-900/40 border-amber-800';
+    if (d.includes('hard') || d.includes('challenging')) return 'text-rose-300 bg-rose-900/40 border-rose-800';
+    return 'text-slate-300 bg-slate-800/50 border-slate-700';
   };
 
   const getTagStyle = (tag: string) => {
     const t = tag.toLowerCase();
     if (t.includes('easy') || t.includes('amazing') || t.includes('respected') || t.includes('clear') || t.includes('extra')) {
-      return 'bg-[#0046FF]/10 text-[#0046FF] border-[#0046FF]/20';
+      return 'bg-[#0046FF]/20 text-blue-200 border-[#0046FF]/30';
     }
     if (t.includes('tough') || t.includes('heavy') || t.includes('strict') || t.includes('pop')) {
-      return 'bg-[#FF8040]/10 text-[#FF8040] border-[#FF8040]/20';
+      return 'bg-[#FF8040]/20 text-orange-200 border-[#FF8040]/30';
     }
-    return 'bg-[#F5F1DC] text-[#001BB7] border-[#001BB7]/20';
+    return 'bg-white/5 text-slate-300 border-white/10';
   };
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center">
-          <Loader2 className="w-12 h-12 text-[#0046FF] animate-spin mx-auto mb-4" />
-          <p className="text-[#001BB7] font-medium text-lg">Curating your perfect schedule...</p>
+          <Loader2 className="w-12 h-12 text-white animate-spin mx-auto mb-4" />
+          <p className="text-white/80 font-medium text-lg">Curating your perfect schedule...</p>
         </motion.div>
       </div>
     );
@@ -96,7 +96,7 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
       
       <button 
         onClick={onBack}
-        className="mb-6 flex items-center gap-2 text-[#001BB7]/60 hover:text-[#001BB7] transition-colors font-bold"
+        className="mb-6 flex items-center gap-2 text-white/60 hover:text-white transition-colors font-bold"
       >
         <ArrowLeft className="w-4 h-4" /> Back to Preferences
       </button>
@@ -107,36 +107,36 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
         animate={{ opacity: 1, y: 0 }}
         className="mb-10 text-center"
       >
-        <h2 className="text-4xl font-bold text-[#001BB7] mb-3 flex items-center justify-center gap-3">
+        <h2 className="text-4xl font-bold text-white mb-3 flex items-center justify-center gap-3">
           Your Recommendations <Sparkles className="w-8 h-8 text-[#FF8040] fill-[#FF8040]" />
         </h2>
-        <p className="text-[#001BB7]/80 text-xl font-medium">
-          Found <span className="font-bold text-[#0046FF]">{totalProfessors} professors</span> across <span className="font-bold text-[#0046FF]">{totalCourses} courses</span>.
+        <p className="text-white/80 text-xl font-medium">
+          Found <span className="font-bold text-[#FF8040]">{totalProfessors} professors</span> across <span className="font-bold text-white">{totalCourses} courses</span>.
         </p>
       </motion.div>
 
       {/* Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-          <div className="bg-white p-6 rounded-2xl border border-white/50 shadow-lg shadow-[#001BB7]/5 flex items-center justify-between">
+          <div className="bg-black/20 backdrop-blur-md p-6 rounded-2xl border border-white/10 shadow-lg flex items-center justify-between">
               <div>
-                  <p className="text-xs font-bold text-[#001BB7]/40 uppercase tracking-wider">Courses</p>
-                  <p className="text-3xl font-bold text-[#001BB7]">{totalCourses}</p>
+                  <p className="text-xs font-bold text-white/60 uppercase tracking-wider">Courses</p>
+                  <p className="text-3xl font-bold text-white">{totalCourses}</p>
               </div>
-              <div className="bg-[#0046FF]/10 p-3 rounded-full text-[#0046FF]"><BookOpen className="w-6 h-6" /></div>
+              <div className="bg-white/10 p-3 rounded-full text-white"><BookOpen className="w-6 h-6" /></div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border border-white/50 shadow-lg shadow-[#001BB7]/5 flex items-center justify-between">
+          <div className="bg-black/20 backdrop-blur-md p-6 rounded-2xl border border-white/10 shadow-lg flex items-center justify-between">
               <div>
-                  <p className="text-xs font-bold text-[#001BB7]/40 uppercase tracking-wider">Professors</p>
-                  <p className="text-3xl font-bold text-[#001BB7]">{totalProfessors}</p>
+                  <p className="text-xs font-bold text-white/60 uppercase tracking-wider">Professors</p>
+                  <p className="text-3xl font-bold text-white">{totalProfessors}</p>
               </div>
-              <div className="bg-[#FF8040]/10 p-3 rounded-full text-[#FF8040]"><TrendingUp className="w-6 h-6" /></div>
+              <div className="bg-white/10 p-3 rounded-full text-white"><TrendingUp className="w-6 h-6" /></div>
           </div>
       </div>
 
       {visibleClasses.length === 0 ? (
           <div className="text-center py-20">
-              <p className="text-[#001BB7]/60 text-lg">No classes found matching your criteria.</p>
+              <p className="text-white/60 text-lg">No classes found matching your criteria.</p>
           </div>
       ) : (
         <>
@@ -149,17 +149,17 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="flex-shrink-0 w-96 bg-white rounded-3xl shadow-xl shadow-[#001BB7]/5 border border-white overflow-hidden flex flex-col max-h-[80vh]"
+                  className="flex-shrink-0 w-96 bg-black/20 backdrop-blur-md rounded-3xl shadow-xl border border-white/10 overflow-hidden flex flex-col max-h-[80vh]"
                 >
                   {/* Class Header */}
-                  <div className="bg-[#F5F1DC]/30 px-6 py-5 border-b border-[#001BB7]/10 flex-shrink-0">
+                  <div className="bg-[#0046FF]/10 px-6 py-5 border-b border-white/10 flex-shrink-0">
                     <div className="flex justify-between items-center mb-1">
-                      <h3 className="text-xl font-bold text-[#001BB7]">{classData.courseCode}</h3>
-                      <span className="text-xs font-bold bg-[#0046FF]/10 text-[#0046FF] px-2 py-1 rounded-full border border-[#0046FF]/10">
+                      <h3 className="text-xl font-bold text-white">{classData.courseCode}</h3>
+                      <span className="text-xs font-bold bg-[#0046FF] text-white px-2 py-1 rounded-full border border-white/10">
                           {classData.professors.length} Options
                       </span>
                     </div>
-                    <p className="text-[#001BB7]/60 font-medium text-sm truncate" title={classData.courseName}>
+                    <p className="text-white/60 font-medium text-sm truncate" title={classData.courseName}>
                       {classData.courseName}
                     </p>
                   </div>
@@ -167,7 +167,6 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
                   {/* VERTICAL PROFESSOR LIST */}
                   <div className="overflow-y-auto p-4 space-y-4 custom-scrollbar flex-grow">
                     {classData.professors.map((professor, profIndex) => {
-                      // --- TROPHY LOGIC ---
                       const isBestMatch = profIndex === 0;
 
                       return (
@@ -175,29 +174,29 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
                           key={professor.id}
                           whileHover={{ y: -2 }}
                           className={`
-                            relative rounded-2xl p-5 transition-all group
+                            relative rounded-2xl p-5 transition-all group border
                             ${isBestMatch 
-                                ? 'bg-white border-2 border-[#FF8040] shadow-lg shadow-[#FF8040]/10 z-10 scale-[1.02]' 
-                                : 'bg-white border border-[#001BB7]/10 hover:border-[#0046FF] hover:shadow-lg hover:shadow-[#0046FF]/5'
+                                ? 'bg-[#FF8040]/10 border-[#FF8040] shadow-lg shadow-[#FF8040]/10 z-10 scale-[1.02]' 
+                                : 'bg-[#0046FF]/10 border-white/5 hover:border-[#0046FF] hover:bg-[#0046FF]/20'
                             }
                           `}
                         >
-                          {/* --- TROPHY BADGE (Restored) --- */}
+                          {/* TROPHY BADGE */}
                           {isBestMatch && (
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FF8040] text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm flex items-center gap-1 border-2 border-white z-20">
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FF8040] text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm flex items-center gap-1 border-2 border-[#001BB7] z-20">
                                 <Trophy className="w-3 h-3 fill-white" /> Top Match
                             </div>
                           )}
 
                           <div className="flex items-start justify-between mb-3 mt-1">
                             <div className="w-full">
-                              <h4 className="font-bold text-[#001BB7] text-lg leading-tight mb-2 truncate" title={professor.name}>
+                              <h4 className="font-bold text-white text-lg leading-tight mb-2 truncate" title={professor.name}>
                                 {professor.name}
                               </h4>
                               
                               <div className="flex items-center gap-2">
-                                <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-sm font-bold border ${professor.rating > 0 ? 'bg-[#FF8040]/10 text-[#FF8040] border-[#FF8040]/20' : 'bg-gray-100 text-gray-400 border-gray-200'}`}>
-                                  <Star className={`w-3.5 h-3.5 ${professor.rating > 0 ? 'fill-[#FF8040] text-[#FF8040]' : 'text-gray-300'}`} />
+                                <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-sm font-bold border ${professor.rating > 0 ? 'bg-[#FF8040]/20 text-[#FF8040] border-[#FF8040]/30' : 'bg-white/10 text-white/40 border-white/10'}`}>
+                                  <Star className={`w-3.5 h-3.5 ${professor.rating > 0 ? 'fill-[#FF8040] text-[#FF8040]' : 'text-gray-500'}`} />
                                   {professor.rating > 0 ? professor.rating : "N/A"}
                                 </div>
 
@@ -216,7 +215,7 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
                                     </span>
                                 ))
                             ) : (
-                                <span className="text-xs text-[#001BB7]/40 italic py-1">No attributes</span>
+                                <span className="text-xs text-white/30 italic py-1">No attributes</span>
                             )}
                           </div>
                         </motion.div>
@@ -228,7 +227,7 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
             </div>
           </div>
           
-          <div className="text-center text-sm text-[#001BB7]/40 font-bold">
+          <div className="text-center text-sm text-white/40 font-bold">
               Scroll right for more classes →
           </div>
         </>

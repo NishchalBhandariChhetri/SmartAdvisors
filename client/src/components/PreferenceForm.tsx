@@ -1,20 +1,14 @@
 import React, { useState } from 'react';
-import { Settings, ThumbsUp, GraduationCap, Calendar, Loader2, ArrowLeft, BookOpen, AlertTriangle } from 'lucide-react';
+import { Settings, ThumbsUp, Calendar, Loader2, ArrowLeft, BookOpen, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-// --- DEFINING THE PREFERENCES INTERFACE ---
 export interface Preferences {
-  // Must Haves
   extraCredit: boolean;
   clearGrading: boolean;
   goodFeedback: boolean;
   caring: boolean;
-  
-  // Learning Style
   lectureHeavy: boolean;
   groupProjects: boolean;
-  
-  // Tolerances (Things to avoid unless checked)
   testHeavy: boolean;
   homeworkHeavy: boolean;
   strictAttendance: boolean;
@@ -28,7 +22,6 @@ interface PreferenceFormProps {
 }
 
 export default function PreferenceForm({ onGenerateSchedule, isLoading, onBack }: PreferenceFormProps) {
-  // Initialize all preferences
   const [prefs, setPrefs] = useState<Preferences>({
     extraCredit: true,
     clearGrading: true,
@@ -49,98 +42,90 @@ export default function PreferenceForm({ onGenerateSchedule, isLoading, onBack }
 
   return (
     <div className="max-w-3xl mx-auto">
-      {/* Back Button */}
-      <button onClick={onBack} className="mb-4 text-[#001BB7]/60 hover:text-[#001BB7] flex items-center gap-2 transition-colors font-semibold">
+      <button onClick={onBack} className="mb-4 text-white/60 hover:text-white flex items-center gap-2 transition-colors font-semibold">
         <ArrowLeft className="w-4 h-4" /> Back
       </button>
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-3xl shadow-2xl shadow-[#001BB7]/10 border border-white overflow-hidden"
+        className="bg-white/5 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10 overflow-hidden"
       >
-        {/* Header */}
-        <div className="bg-gradient-to-r from-[#001BB7] to-[#0046FF] p-8 text-white text-center relative">
+        <div className="bg-[#0046FF]/10 p-8 text-center relative border-b border-white/10">
             <div className="relative z-10">
-                <Settings className="w-12 h-12 mx-auto mb-3 opacity-90" />
-                <h2 className="text-3xl font-bold tracking-tight">Design Your Semester</h2>
-                <p className="text-blue-100 mt-2 text-lg font-medium">Select what matters, and we'll find the match.</p>
+                <Settings className="w-12 h-12 mx-auto mb-3 text-white opacity-90" />
+                <h2 className="text-3xl font-bold tracking-tight text-white">Design Your Semester</h2>
+                <p className="text-white/60 mt-2 text-lg font-medium">Select what matters, and we'll find the match.</p>
             </div>
         </div>
 
-        <div className="p-8 bg-white space-y-10">
-            
-            {/* 1. PRIORITIES (Must Haves) */}
+        <div className="p-8 space-y-10">
+            {/* 1. PRIORITIES */}
             <div>
-                <h3 className="text-[#001BB7] font-bold mb-4 flex items-center gap-2 text-lg">
-                    <div className="p-1.5 bg-[#0046FF]/10 rounded-lg"><ThumbsUp className="w-5 h-5 text-[#0046FF]" /></div>
+                <h3 className="text-white font-bold mb-4 flex items-center gap-2 text-lg">
+                    <div className="p-1.5 bg-[#0046FF]/20 rounded-lg"><ThumbsUp className="w-5 h-5 text-[#0046FF]" /></div>
                     Your Priorities
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
                     {[
-                        { id: 'extraCredit', label: 'Extra Credit Opportunities', desc: 'Boost your GPA' },
-                        { id: 'clearGrading', label: 'Clear Grading Criteria', desc: 'Know exactly how to get an A' },
-                        { id: 'goodFeedback', label: 'Gives Good Feedback', desc: 'Helpful comments on work' },
-                        { id: 'caring', label: 'Caring & Respected', desc: 'Accessible and inspirational' },
+                        { id: 'extraCredit', label: 'Extra Credit', desc: 'Boost your GPA' },
+                        { id: 'clearGrading', label: 'Clear Grading', desc: 'Know how to get an A' },
+                        { id: 'goodFeedback', label: 'Good Feedback', desc: 'Helpful comments' },
+                        { id: 'caring', label: 'Caring', desc: 'Accessible & kind' },
                     ].map((item) => (
-                        <label key={item.id} className={`flex items-start gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 shadow-sm ${prefs[item.id as keyof Preferences] ? 'border-[#0046FF] bg-[#0046FF]/5' : 'border-[#F5F1DC] hover:border-[#0046FF]/30'}`}>
+                        <label key={item.id} className={`flex items-start gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 shadow-sm ${prefs[item.id as keyof Preferences] ? 'border-[#0046FF] bg-[#0046FF]/20' : 'border-white/5 bg-white/5 hover:border-white/20'}`}>
                             <div className="pt-0.5"><input type="checkbox" name={item.id} checked={prefs[item.id as keyof Preferences]} onChange={handleChange} className="w-5 h-5 rounded text-[#0046FF] focus:ring-[#0046FF]" /></div>
-                            <div><span className="font-bold text-[#001BB7] block">{item.label}</span><span className="text-sm text-[#001BB7]/60">{item.desc}</span></div>
+                            <div><span className="font-bold text-white block">{item.label}</span><span className="text-sm text-white/50">{item.desc}</span></div>
                         </label>
                     ))}
                 </div>
             </div>
 
-            <div className="border-t border-[#001BB7]/10"></div>
-
             {/* 2. LEARNING STYLE */}
             <div>
-                <h3 className="text-[#001BB7] font-bold mb-4 flex items-center gap-2 text-lg">
-                    <div className="p-1.5 bg-[#FF8040]/10 rounded-lg"><BookOpen className="w-5 h-5 text-[#FF8040]" /></div>
+                <h3 className="text-white font-bold mb-4 flex items-center gap-2 text-lg">
+                    <div className="p-1.5 bg-[#FF8040]/20 rounded-lg"><BookOpen className="w-5 h-5 text-[#FF8040]" /></div>
                     Teaching Style
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
-                    <label className={`flex items-start gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 shadow-sm ${prefs.lectureHeavy ? 'border-[#FF8040] bg-[#FF8040]/5' : 'border-[#F5F1DC] hover:border-[#FF8040]/30'}`}>
+                    <label className={`flex items-start gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 shadow-sm ${prefs.lectureHeavy ? 'border-[#FF8040] bg-[#FF8040]/20' : 'border-white/5 bg-white/5 hover:border-white/20'}`}>
                         <div className="pt-0.5"><input type="checkbox" name="lectureHeavy" checked={prefs.lectureHeavy} onChange={handleChange} className="w-5 h-5 rounded text-[#FF8040] focus:ring-[#FF8040]" /></div>
-                        <div><span className="font-bold text-[#001BB7] block">Amazing Lectures</span><span className="text-sm text-[#001BB7]/60">I learn by listening</span></div>
+                        <div><span className="font-bold text-white block">Amazing Lectures</span><span className="text-sm text-white/50">I learn by listening</span></div>
                     </label>
-                    <label className={`flex items-start gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 shadow-sm ${prefs.groupProjects ? 'border-[#FF8040] bg-[#FF8040]/5' : 'border-[#F5F1DC] hover:border-[#FF8040]/30'}`}>
+                    <label className={`flex items-start gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 shadow-sm ${prefs.groupProjects ? 'border-[#FF8040] bg-[#FF8040]/20' : 'border-white/5 bg-white/5 hover:border-white/20'}`}>
                         <div className="pt-0.5"><input type="checkbox" name="groupProjects" checked={prefs.groupProjects} onChange={handleChange} className="w-5 h-5 rounded text-[#FF8040] focus:ring-[#FF8040]" /></div>
-                        <div><span className="font-bold text-[#001BB7] block">Group Projects</span><span className="text-sm text-[#001BB7]/60">I like collaboration</span></div>
+                        <div><span className="font-bold text-white block">Group Projects</span><span className="text-sm text-white/50">I like collaboration</span></div>
                     </label>
                 </div>
             </div>
 
-            <div className="border-t border-[#001BB7]/10"></div>
-
-            {/* 3. TOLERANCES (Red/Danger Zone) */}
+            {/* 3. TOLERANCES */}
             <div>
-                <h3 className="text-[#001BB7] font-bold mb-4 flex items-center gap-2 text-lg">
-                    <div className="p-1.5 bg-red-100 rounded-lg"><AlertTriangle className="w-5 h-5 text-red-600" /></div>
-                    What are you okay with? <span className="text-sm font-normal text-gray-400 ml-2">(Leave unchecked to avoid)</span>
+                <h3 className="text-white font-bold mb-4 flex items-center gap-2 text-lg">
+                    <div className="p-1.5 bg-red-500/20 rounded-lg"><AlertTriangle className="w-5 h-5 text-red-400" /></div>
+                    What are you okay with?
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
                     {[
                         { id: 'testHeavy', label: 'Test Heavy', desc: 'Few grades, mostly exams' },
                         { id: 'homeworkHeavy', label: 'Lots of Homework', desc: 'Frequent assignments' },
-                        { id: 'strictAttendance', label: 'Strict Attendance', desc: 'Skip class? You won\'t pass.' },
+                        { id: 'strictAttendance', label: 'Strict Attendance', desc: 'Mandatory attendance' },
                         { id: 'popQuizzes', label: 'Pop Quizzes', desc: 'Be ready anytime' },
                     ].map((item) => (
-                        <label key={item.id} className={`flex items-start gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 shadow-sm ${prefs[item.id as keyof Preferences] ? 'border-red-400 bg-red-50' : 'border-[#F5F1DC] hover:border-red-200'}`}>
-                            <div className="pt-0.5"><input type="checkbox" name={item.id} checked={prefs[item.id as keyof Preferences]} onChange={handleChange} className="w-5 h-5 rounded text-red-600 focus:ring-red-500" /></div>
-                            <div><span className="font-bold text-[#001BB7] block">{item.label}</span><span className="text-sm text-[#001BB7]/60">{item.desc}</span></div>
+                        <label key={item.id} className={`flex items-start gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 shadow-sm ${prefs[item.id as keyof Preferences] ? 'border-red-500/50 bg-red-500/10' : 'border-white/5 bg-white/5 hover:border-white/20'}`}>
+                            <div className="pt-0.5"><input type="checkbox" name={item.id} checked={prefs[item.id as keyof Preferences]} onChange={handleChange} className="w-5 h-5 rounded text-red-500 focus:ring-red-500" /></div>
+                            <div><span className="font-bold text-white block">{item.label}</span><span className="text-sm text-white/50">{item.desc}</span></div>
                         </label>
                     ))}
                 </div>
             </div>
 
-            {/* GENERATE BUTTON */}
             <motion.button 
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => onGenerateSchedule(prefs)}
               disabled={isLoading}
-              className="w-full bg-[#0046FF] hover:bg-[#001BB7] text-white font-bold py-4 rounded-xl shadow-lg shadow-[#0046FF]/30 transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-lg"
+              className="w-full bg-[#0046FF] hover:bg-[#0036CC] text-white font-bold py-4 rounded-xl shadow-lg shadow-[#0046FF]/30 transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-lg"
             >
               {isLoading ? (
                 <>Generating Schedule <Loader2 className="animate-spin w-5 h-5"/></>

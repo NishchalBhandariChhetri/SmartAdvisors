@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Compass, Github } from 'lucide-react'; // Added Github icon
+import { Compass, Github } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -18,14 +18,28 @@ export default function Layout({ children, onLogoClick }: LayoutProps) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#F5F1DC] font-sans text-[#001BB7]">
+    // 1. BASE BACKGROUND: Very Dark Slate/Blue (Almost Black)
+    <div className="min-h-screen bg-[#020617] font-sans text-white relative overflow-x-hidden selection:bg-[#FF8040] selection:text-white">
       
+      {/* --- CREATIVE BACKGROUND LAYERS --- */}
+      
+      {/* Top Left: Deep Primary Blue Glow */}
+      <div className="fixed top-[-10%] left-[-10%] w-[700px] h-[700px] bg-[#001BB7] rounded-full blur-[120px] opacity-20 -z-10 pointer-events-none mix-blend-screen" />
+      
+      {/* Center Right: Bright Blue Highlight */}
+      <div className="fixed top-[20%] right-[-5%] w-[600px] h-[600px] bg-[#0046FF] rounded-full blur-[100px] opacity-10 -z-10 pointer-events-none mix-blend-screen" />
+      
+      {/* Bottom Left: Orange Accent Glow (Subtle) */}
+      <div className="fixed bottom-[-10%] left-[10%] w-[500px] h-[500px] bg-[#FF8040] rounded-full blur-[120px] opacity-10 -z-10 pointer-events-none mix-blend-screen" />
+      
+      {/* ---------------------------------- */}
+
       {/* NAVBAR */}
       <nav 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out border-b
           ${isScrolled 
-            ? 'bg-[#F5F1DC]/50 backdrop-blur-sm border-[#001BB7]/10 shadow-sm py-3' 
-            : 'bg-transparent border-transparent py-5'
+            ? 'bg-[#0F172A]/100 backdrop-blur-md border-white/5 shadow-lg py-3' 
+            : 'bg-[#0F172A]/100 transparent border-transparent py-3'
           }`}
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
@@ -35,12 +49,12 @@ export default function Layout({ children, onLogoClick }: LayoutProps) {
             onClick={onLogoClick} 
             className="flex items-center gap-3 hover:opacity-80 transition-opacity focus:outline-none group"
           >
-            <div className="relative bg-gradient-to-tr from-[#001BB7] to-[#0046FF] p-2.5 rounded-xl shadow-lg shadow-[#0046FF]/20 group-hover:shadow-[#FF8040]/20 transition-all duration-300">
+            <div className="relative bg-white/5 p-2.5 rounded-xl border border-white/10 shadow-lg group-hover:bg-white/10 transition-all duration-300">
               <Compass className="w-6 h-6 text-white relative z-10" strokeWidth={2.5} />
               <div className="absolute top-2 right-2 w-2 h-2 bg-[#FF8040] rounded-full z-20 animate-pulse"></div>
             </div>
 
-            <h1 className="text-xl font-bold text-[#001BB7] tracking-tight group-hover:text-[#0046FF] transition-colors">
+            <h1 className="text-xl font-bold text-white tracking-tight">
               Smart Advisors
             </h1>
           </button>
@@ -50,10 +64,10 @@ export default function Layout({ children, onLogoClick }: LayoutProps) {
             href="https://github.com/krm3798/SmartAdvisors" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 rounded-full border border-[#001BB7]/10 bg-white/50 hover:bg-white hover:border-[#001BB7]/30 hover:shadow-md transition-all group"
+            className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-[#0046FF]/50 transition-all group text-white"
           >
-            <span className="text-sm font-bold text-[#001BB7] hidden sm:block group-hover:text-[#0046FF]">GitHub</span>
-            <Github className="w-5 h-5 text-[#001BB7] group-hover:text-[#0046FF]" />
+            <span className="text-sm font-bold hidden sm:block group-hover:text-[#0046FF] transition-colors">GitHub</span>
+            <Github className="w-5 h-5 group-hover:text-[#0046FF] transition-colors" />
           </a>
 
         </div>
