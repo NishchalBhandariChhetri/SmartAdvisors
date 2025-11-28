@@ -72,7 +72,7 @@ def parse_transcript():
         if 'transcript' not in request.files: return jsonify({'error': 'No file provided'}), 400
         file = request.files['transcript']
         temp_dir = tempfile.gettempdir()
-        filename = secure_filename(file.filename)
+        filename = secure_filename(file.filename) # type: ignore
         temp_path = os.path.join(temp_dir, filename)
         file.save(temp_path)
         courses = extract_all_courses(temp_path)
@@ -87,12 +87,12 @@ def get_recommendations():
         department = request.form.get('department')
         completed_courses = []
         if 'completed_courses' in request.form:
-            try: completed_courses = json.loads(request.form.get('completed_courses'))
+            try: completed_courses = json.loads(request.form.get('completed_courses')) # type: ignore
             except: pass
         elif 'transcript' in request.files:
             file = request.files['transcript']
             temp_dir = tempfile.gettempdir()
-            filename = secure_filename(file.filename)
+            filename = secure_filename(file.filename) # type: ignore
             temp_path = os.path.join(temp_dir, filename)
             file.save(temp_path)
             completed_courses = extract_all_courses(temp_path)

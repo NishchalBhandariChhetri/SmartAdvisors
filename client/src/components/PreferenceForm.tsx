@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, ThumbsUp, Calendar, Loader2, ArrowLeft, BookOpen, AlertTriangle } from 'lucide-react';
+import { Settings, ThumbsUp, Loader2, ArrowLeft, BookOpen, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export interface Preferences {
