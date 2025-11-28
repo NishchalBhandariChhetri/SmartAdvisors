@@ -58,7 +58,7 @@ export default function UploadScreen({ file, department, onFileChange, setDepart
 
         <div className="bg-[#0046FF]/10 rounded-xl p-4 mb-8 border border-[#0046FF]/20 text-left">
             <h4 className="text-[#0046FF] font-bold text-sm mb-1 flex items-center gap-2">
-                <ExternalLink className="w-4 h-4" /> How to get your transcript?
+                <ExternalLink className="w-4 h-4" /> How to get your unofficial transcript?
             </h4>
             <p className="text-white/60 text-sm leading-relaxed">
                 Log into MyMav, go to <strong>Academic Records</strong>, and select <strong>View Unofficial Transcript</strong>. Save as PDF.
