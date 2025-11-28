@@ -1,12 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Star, TrendingUp, Award, BookOpen, Loader2, Sparkles, ArrowLeft, Trophy } from 'lucide-react'; // Added Trophy
+import { Star, TrendingUp, BookOpen, Loader2, Sparkles, ArrowLeft, Trophy } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 type PreferencesType = {
-  easyGrader: boolean;
+  extraCredit: boolean;
+  clearGrading: boolean;
+  goodFeedback: boolean;
   caring: boolean;
+  lectureHeavy: boolean;
+  groupProjects: boolean;
   testHeavy: boolean;
-  attendanceStrict: boolean;
+  homeworkHeavy: boolean;
+  strictAttendance: boolean;
+  popQuizzes: boolean;
 };
 
 interface Professor {
@@ -50,6 +56,9 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
 
   const visibleClasses = classes.filter((c) => c.professors.length > 0);
 
+  const totalCourses = visibleClasses.length;
+  const totalProfessors = visibleClasses.reduce((sum, c) => sum + c.professors.length, 0);
+
   // --- COLOR HELPERS ---
   const getDifficultyColor = (difficulty: string) => {
     if (!difficulty) return 'text-[#001BB7]/60 bg-[#F5F1DC] border-[#001BB7]/20';
@@ -62,10 +71,10 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
 
   const getTagStyle = (tag: string) => {
     const t = tag.toLowerCase();
-    if (t.includes('easy') || t.includes('amazing') || t.includes('respected') || t.includes('clear')) {
+    if (t.includes('easy') || t.includes('amazing') || t.includes('respected') || t.includes('clear') || t.includes('extra')) {
       return 'bg-[#0046FF]/10 text-[#0046FF] border-[#0046FF]/20';
     }
-    if (t.includes('tough') || t.includes('heavy') || t.includes('strict')) {
+    if (t.includes('tough') || t.includes('heavy') || t.includes('strict') || t.includes('pop')) {
       return 'bg-[#FF8040]/10 text-[#FF8040] border-[#FF8040]/20';
     }
     return 'bg-[#F5F1DC] text-[#001BB7] border-[#001BB7]/20';
@@ -81,9 +90,6 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
       </div>
     );
   }
-
-  const totalCourses = visibleClasses.length;
-  const totalProfessors = visibleClasses.reduce((sum, c) => sum + c.professors.length, 0);
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -161,7 +167,7 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
                   {/* VERTICAL PROFESSOR LIST */}
                   <div className="overflow-y-auto p-4 space-y-4 custom-scrollbar flex-grow">
                     {classData.professors.map((professor, profIndex) => {
-                      // CHECK IF THIS IS THE TOP MATCH (First in list)
+                      // --- TROPHY LOGIC ---
                       const isBestMatch = profIndex === 0;
 
                       return (
@@ -176,16 +182,16 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
                             }
                           `}
                         >
-                          {/* --- BEST MATCH BADGE --- */}
+                          {/* --- TROPHY BADGE (Restored) --- */}
                           {isBestMatch && (
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FF8040] text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm flex items-center gap-1 border-2 border-white">
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FF8040] text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm flex items-center gap-1 border-2 border-white z-20">
                                 <Trophy className="w-3 h-3 fill-white" /> Top Match
                             </div>
                           )}
 
                           <div className="flex items-start justify-between mb-3 mt-1">
                             <div className="w-full">
-                              <h4 className={`font-bold text-lg leading-tight mb-2 truncate ${isBestMatch ? 'text-[#001BB7]' : 'text-[#001BB7]'}`} title={professor.name}>
+                              <h4 className="font-bold text-[#001BB7] text-lg leading-tight mb-2 truncate" title={professor.name}>
                                 {professor.name}
                               </h4>
                               
