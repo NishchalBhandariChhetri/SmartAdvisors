@@ -1,4 +1,4 @@
-import React from 'react';
+// REMOVED: import React from 'react';
 import { ArrowRight, GraduationCap, Sparkles, BookOpen, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -7,6 +7,7 @@ interface WelcomePageProps {
 }
 
 export default function WelcomePage({ onGetStarted }: WelcomePageProps) {
+  // ... (The rest of your component code remains exactly the same) ...
   return (
     <div className="relative min-h-[80vh] flex flex-col items-center justify-center text-center overflow-hidden">
       
@@ -20,7 +21,7 @@ export default function WelcomePage({ onGetStarted }: WelcomePageProps) {
         transition={{ duration: 0.6 }}
         className="max-w-4xl mx-auto px-6 relative z-10"
       >
-        {/* UPDATED BADGE: Mention UTA */}
+        {/* Badge */}
         <motion.div 
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -38,7 +39,6 @@ export default function WelcomePage({ onGetStarted }: WelcomePageProps) {
           </span>
         </h1>
 
-        {/* UPDATED SUBTITLE: Mention UTA Transcript */}
         <p className="text-xl text-[#001BB7]/70 mb-10 max-w-3xl mx-auto leading-relaxed">
           Stop guessing. We analyze your <strong>UTA transcript</strong> to identify the classes you've already completed, determine exactly what you are eligible to take next, and match you with the best professors for your learning style.
         </p>

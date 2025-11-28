@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Star, TrendingUp, Award, BookOpen, Loader2, Sparkles, ArrowLeft } from 'lucide-react';
+import { Star, TrendingUp, Award, BookOpen, Loader2, Sparkles, ArrowLeft, Trophy } from 'lucide-react'; // Added Trophy
 import { motion } from 'framer-motion';
 
 type PreferencesType = {
@@ -50,7 +50,7 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
 
   const visibleClasses = classes.filter((c) => c.professors.length > 0);
 
-  // --- NEW COLOR PALETTE LOGIC ---
+  // --- COLOR HELPERS ---
   const getDifficultyColor = (difficulty: string) => {
     if (!difficulty) return 'text-[#001BB7]/60 bg-[#F5F1DC] border-[#001BB7]/20';
     const d = difficulty.toLowerCase();
@@ -62,11 +62,9 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
 
   const getTagStyle = (tag: string) => {
     const t = tag.toLowerCase();
-    // Good (Blue)
     if (t.includes('easy') || t.includes('amazing') || t.includes('respected') || t.includes('clear')) {
       return 'bg-[#0046FF]/10 text-[#0046FF] border-[#0046FF]/20';
     }
-    // Hard (Orange)
     if (t.includes('tough') || t.includes('heavy') || t.includes('strict')) {
       return 'bg-[#FF8040]/10 text-[#FF8040] border-[#FF8040]/20';
     }
@@ -97,7 +95,7 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
         <ArrowLeft className="w-4 h-4" /> Back to Preferences
       </button>
 
-      {/* CENTERED HEADER */}
+      {/* HEADER */}
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -111,13 +109,32 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
         </p>
       </motion.div>
 
-      {/* MAIN LAYOUT: HORIZONTAL SCROLLING CLASSES */}
+      {/* Stats Row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          <div className="bg-white p-6 rounded-2xl border border-white/50 shadow-lg shadow-[#001BB7]/5 flex items-center justify-between">
+              <div>
+                  <p className="text-xs font-bold text-[#001BB7]/40 uppercase tracking-wider">Courses</p>
+                  <p className="text-3xl font-bold text-[#001BB7]">{totalCourses}</p>
+              </div>
+              <div className="bg-[#0046FF]/10 p-3 rounded-full text-[#0046FF]"><BookOpen className="w-6 h-6" /></div>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl border border-white/50 shadow-lg shadow-[#001BB7]/5 flex items-center justify-between">
+              <div>
+                  <p className="text-xs font-bold text-[#001BB7]/40 uppercase tracking-wider">Professors</p>
+                  <p className="text-3xl font-bold text-[#001BB7]">{totalProfessors}</p>
+              </div>
+              <div className="bg-[#FF8040]/10 p-3 rounded-full text-[#FF8040]"><TrendingUp className="w-6 h-6" /></div>
+          </div>
+      </div>
+
       {visibleClasses.length === 0 ? (
           <div className="text-center py-20">
               <p className="text-[#001BB7]/60 text-lg">No classes found matching your criteria.</p>
           </div>
       ) : (
         <>
+          {/* HORIZONTAL CLASS SCROLL */}
           <div className="overflow-x-auto pb-12 no-scrollbar">
             <div className="flex gap-8 min-w-min px-2">
               {visibleClasses.map((classData, index) => (
@@ -128,6 +145,7 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
                   transition={{ delay: index * 0.1 }}
                   className="flex-shrink-0 w-96 bg-white rounded-3xl shadow-xl shadow-[#001BB7]/5 border border-white overflow-hidden flex flex-col max-h-[80vh]"
                 >
+                  {/* Class Header */}
                   <div className="bg-[#F5F1DC]/30 px-6 py-5 border-b border-[#001BB7]/10 flex-shrink-0">
                     <div className="flex justify-between items-center mb-1">
                       <h3 className="text-xl font-bold text-[#001BB7]">{classData.courseCode}</h3>
@@ -140,45 +158,64 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
                     </p>
                   </div>
 
+                  {/* VERTICAL PROFESSOR LIST */}
                   <div className="overflow-y-auto p-4 space-y-4 custom-scrollbar flex-grow">
-                    {classData.professors.map((professor) => (
-                      <motion.div
-                        key={professor.id}
-                        whileHover={{ y: -2 }}
-                        className="border border-[#001BB7]/10 bg-white rounded-2xl p-5 hover:border-[#0046FF] hover:shadow-lg hover:shadow-[#0046FF]/5 transition-all group"
-                      >
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="w-full">
-                            <h4 className="font-bold text-[#001BB7] text-lg leading-tight mb-2 truncate" title={professor.name}>
-                              {professor.name}
-                            </h4>
-                            
-                            <div className="flex items-center gap-2">
-                              <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-sm font-bold border ${professor.rating > 0 ? 'bg-[#FF8040]/10 text-[#FF8040] border-[#FF8040]/20' : 'bg-gray-100 text-gray-400 border-gray-200'}`}>
-                                <Star className={`w-3.5 h-3.5 ${professor.rating > 0 ? 'fill-[#FF8040] text-[#FF8040]' : 'text-gray-300'}`} />
-                                {professor.rating > 0 ? professor.rating : "N/A"}
-                              </div>
+                    {classData.professors.map((professor, profIndex) => {
+                      // CHECK IF THIS IS THE TOP MATCH (First in list)
+                      const isBestMatch = profIndex === 0;
 
-                              <span className={`px-2 py-0.5 rounded-lg text-xs font-semibold border ${getDifficultyColor(professor.difficulty)}`}>
-                                Diff: {professor.difficulty}
-                              </span>
+                      return (
+                        <motion.div
+                          key={professor.id}
+                          whileHover={{ y: -2 }}
+                          className={`
+                            relative rounded-2xl p-5 transition-all group
+                            ${isBestMatch 
+                                ? 'bg-white border-2 border-[#FF8040] shadow-lg shadow-[#FF8040]/10 z-10 scale-[1.02]' 
+                                : 'bg-white border border-[#001BB7]/10 hover:border-[#0046FF] hover:shadow-lg hover:shadow-[#0046FF]/5'
+                            }
+                          `}
+                        >
+                          {/* --- BEST MATCH BADGE --- */}
+                          {isBestMatch && (
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FF8040] text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm flex items-center gap-1 border-2 border-white">
+                                <Trophy className="w-3 h-3 fill-white" /> Top Match
+                            </div>
+                          )}
+
+                          <div className="flex items-start justify-between mb-3 mt-1">
+                            <div className="w-full">
+                              <h4 className={`font-bold text-lg leading-tight mb-2 truncate ${isBestMatch ? 'text-[#001BB7]' : 'text-[#001BB7]'}`} title={professor.name}>
+                                {professor.name}
+                              </h4>
+                              
+                              <div className="flex items-center gap-2">
+                                <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-sm font-bold border ${professor.rating > 0 ? 'bg-[#FF8040]/10 text-[#FF8040] border-[#FF8040]/20' : 'bg-gray-100 text-gray-400 border-gray-200'}`}>
+                                  <Star className={`w-3.5 h-3.5 ${professor.rating > 0 ? 'fill-[#FF8040] text-[#FF8040]' : 'text-gray-300'}`} />
+                                  {professor.rating > 0 ? professor.rating : "N/A"}
+                                </div>
+
+                                <span className={`px-2 py-0.5 rounded-lg text-xs font-semibold border ${getDifficultyColor(professor.difficulty)}`}>
+                                  Diff: {professor.difficulty}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        <div className="flex flex-wrap gap-2">
-                          {professor.tags && professor.tags.length > 0 ? (
-                              professor.tags.slice(0, 4).map((tag, i) => (
-                                  <span key={i} className={`px-2 py-1 rounded-md text-[11px] font-bold border ${getTagStyle(tag)}`}>
-                                      {tag}
-                                  </span>
-                              ))
-                          ) : (
-                              <span className="text-xs text-[#001BB7]/40 italic py-1">No attributes</span>
-                          )}
-                        </div>
-                      </motion.div>
-                    ))}
+                          <div className="flex flex-wrap gap-2">
+                            {professor.tags && professor.tags.length > 0 ? (
+                                professor.tags.slice(0, 4).map((tag, i) => (
+                                    <span key={i} className={`px-2 py-1 rounded-md text-[11px] font-bold border ${getTagStyle(tag)}`}>
+                                        {tag}
+                                    </span>
+                                ))
+                            ) : (
+                                <span className="text-xs text-[#001BB7]/40 italic py-1">No attributes</span>
+                            )}
+                          </div>
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 </motion.div>
               ))}

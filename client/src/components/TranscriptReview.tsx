@@ -1,4 +1,4 @@
-import React from 'react';
+// REMOVED: import React from 'react';
 import { CheckCircle, ArrowRight, ArrowLeft, BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -31,7 +31,6 @@ export default function TranscriptReview({ courses, onNext, onBack }: Transcript
         <div className="p-8 bg-[#F5F1DC]/30">
             <p className="text-sm font-bold text-[#001BB7]/40 uppercase tracking-wider mb-4">Completed Courses</p>
             
-            {/* Scrollable Course List */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8 max-h-60 overflow-y-auto custom-scrollbar pr-2">
                 {courses.length > 0 ? (
                     courses.map((course, index) => (

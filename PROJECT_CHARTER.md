@@ -43,7 +43,7 @@
 
 ## Team Roles
 *This is an initial plan and is subject to change as the project progresses.*
-- **Kanishkar Manoj:** Project Manager, ML & Backend Development
+- **Kanishkar Manoj:** Project Manager & Full Stack
 - **Akilan:** Frontend
 - **Shreyak:** Frontend
 - **Nick:** Backend & Database
