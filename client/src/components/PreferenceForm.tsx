@@ -128,9 +128,9 @@ export default function PreferenceForm({ onGenerateSchedule, isLoading, onBack }
               className="w-full bg-[#0046FF] hover:bg-[#0036CC] text-white font-bold py-4 rounded-xl shadow-lg shadow-[#0046FF]/30 transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-lg"
             >
               {isLoading ? (
-                <>Generating Schedule <Loader2 className="animate-spin w-5 h-5"/></>
+                <>Matching  <Loader2 className="animate-spin w-5 h-5"/></>
               ) : (
-                <>Find My Perfect Professors <Calendar className="w-5 h-5" /></>
+                <>Find My Perfect Matches</>
               )}
             </motion.button>
         </div>

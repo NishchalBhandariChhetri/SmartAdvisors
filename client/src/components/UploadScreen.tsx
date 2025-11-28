@@ -63,7 +63,8 @@ export default function UploadScreen({ file, department, onFileChange, setDepart
             <p className="text-white/60 text-sm leading-relaxed">
                 Log into MyMav, go to <strong>Academic Records</strong>, and select <strong>View Unofficial Transcript</strong>. Save as PDF.
                 <br/>
-                <a href="https://www.uta.edu/academics/records/transcripts" target="_blank" rel="noopener noreferrer" className="text-[#FF8040] font-bold hover:underline mt-1 inline-block">
+                <a href="https://uta.service-now.com/selfservice?id=utassp01_kb_article&sys_id=fd187c6edbd48cd8d48b5e65ce96194a&catid=&pageid=utassp02_kb_public_knowledge_base" 
+                target="_blank" rel="noopener noreferrer" className="text-[#FF8040] font-bold hover:underline mt-1 inline-block">
                     View Official Guide &rarr;
                 </a>
             </p>
