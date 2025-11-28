@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Star, Users, Calendar, TrendingUp, Clock, Award, BookOpen, Loader2 } from 'lucide-react';
+import { Star, TrendingUp, Award, BookOpen, Loader2, Sparkles, ArrowLeft } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 type PreferencesType = {
-  preferredDays: string[];
-  assessmentType: string;
-  attendanceRequired: string;
-  classSize: string;
-  classesTaken: string[];
+  easyGrader: boolean;
+  caring: boolean;
+  testHeavy: boolean;
+  attendanceStrict: boolean;
 };
 
 interface Professor {
@@ -20,7 +20,7 @@ interface Professor {
   classSize: string;
   assessmentType: string;
   attendance: string;
-  tags: string[];
+  tags: string[]; 
 }
 
 interface ClassData {
@@ -34,58 +34,52 @@ interface RecommendationDashboardProps {
     preferences: PreferencesType;
     recommendations: ClassData[];
   };
+  onBack: () => void;
 }
 
-export default function RecommendationDashboard({ userData }: RecommendationDashboardProps) {
+export default function RecommendationDashboard({ userData, onBack }: RecommendationDashboardProps) {
   const [classes, setClasses] = useState<ClassData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error] = useState<string | null>(null);
 
   useEffect(() => {
     if (userData?.recommendations) {
       setClasses(userData.recommendations);
-      console.log(userData);
-      console.log(userData.recommendations);
       setIsLoading(false);
     }
   }, [userData]);
 
   const visibleClasses = classes.filter((c) => c.professors.length > 0);
 
+  // --- NEW COLOR PALETTE LOGIC ---
   const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty.toLowerCase()) {
-      case 'easy':
-        return 'text-green-700 bg-green-50';
-      case 'moderate':
-        return 'text-yellow-700 bg-yellow-50';
-      case 'challenging':
-        return 'text-orange-700 bg-orange-50';
-      default:
-        return 'text-gray-700 bg-gray-50';
+    if (!difficulty) return 'text-[#001BB7]/60 bg-[#F5F1DC] border-[#001BB7]/20';
+    const d = difficulty.toLowerCase();
+    if (d.includes('easy')) return 'text-[#0046FF] bg-[#0046FF]/10 border-[#0046FF]/20';
+    if (d.includes('medium') || d.includes('moderate')) return 'text-[#FF8040] bg-[#FF8040]/10 border-[#FF8040]/20';
+    if (d.includes('hard') || d.includes('challenging')) return 'text-red-600 bg-red-50 border-red-200';
+    return 'text-[#001BB7]/60 bg-[#F5F1DC] border-[#001BB7]/20';
+  };
+
+  const getTagStyle = (tag: string) => {
+    const t = tag.toLowerCase();
+    // Good (Blue)
+    if (t.includes('easy') || t.includes('amazing') || t.includes('respected') || t.includes('clear')) {
+      return 'bg-[#0046FF]/10 text-[#0046FF] border-[#0046FF]/20';
     }
+    // Hard (Orange)
+    if (t.includes('tough') || t.includes('heavy') || t.includes('strict')) {
+      return 'bg-[#FF8040]/10 text-[#FF8040] border-[#FF8040]/20';
+    }
+    return 'bg-[#F5F1DC] text-[#001BB7] border-[#001BB7]/20';
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 text-lg">Loading your recommendations...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
-        <div className="bg-white rounded-xl shadow-lg p-8 max-w-md">
-          <div className="text-red-600 text-center mb-4">
-            <Award className="w-12 h-12 mx-auto mb-2" />
-            <h2 className="text-xl font-bold">Error Loading Recommendations</h2>
-          </div>
-          <p className="text-gray-600 text-center">{error}</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center">
+          <Loader2 className="w-12 h-12 text-[#0046FF] animate-spin mx-auto mb-4" />
+          <p className="text-[#001BB7] font-medium text-lg">Curating your perfect schedule...</p>
+        </motion.div>
       </div>
     );
   }
@@ -94,150 +88,108 @@ export default function RecommendationDashboard({ userData }: RecommendationDash
   const totalProfessors = visibleClasses.reduce((sum, c) => sum + c.professors.length, 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
-      <nav className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
-                <Award className="w-6 h-6 text-white" />
-              </div>
-              <h1 className="text-xl font-bold text-gray-900">Smart Advisors</h1>
-            </div>
-            <div className="flex items-center gap-4">
-              <button className="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium">
-                Dashboard
-              </button>
-              <button className="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium">
-                My Schedule
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="max-w-7xl mx-auto">
+      
+      <button 
+        onClick={onBack}
+        className="mb-6 flex items-center gap-2 text-[#001BB7]/60 hover:text-[#001BB7] transition-colors font-bold"
+      >
+        <ArrowLeft className="w-4 h-4" /> Back to Preferences
+      </button>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Your Recommended Classes</h2>
-          <p className="text-gray-600">Explore professors for each class based on your preferences</p>
-        </div>
+      {/* CENTERED HEADER */}
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-10 text-center"
+      >
+        <h2 className="text-4xl font-bold text-[#001BB7] mb-3 flex items-center justify-center gap-3">
+          Your Recommendations <Sparkles className="w-8 h-8 text-[#FF8040] fill-[#FF8040]" />
+        </h2>
+        <p className="text-[#001BB7]/80 text-xl font-medium">
+          Found <span className="font-bold text-[#0046FF]">{totalProfessors} professors</span> across <span className="font-bold text-[#0046FF]">{totalCourses} courses</span>.
+        </p>
+      </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Eligible Courses</p>
-                <p className="text-2xl font-bold text-gray-900">{totalCourses}</p>
-              </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <BookOpen className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
+      {/* MAIN LAYOUT: HORIZONTAL SCROLLING CLASSES */}
+      {visibleClasses.length === 0 ? (
+          <div className="text-center py-20">
+              <p className="text-[#001BB7]/60 text-lg">No classes found matching your criteria.</p>
           </div>
-
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Professor Options</p>
-                <p className="text-2xl font-bold text-gray-900">{totalProfessors}</p>
-              </div>
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-green-600" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {visibleClasses.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-            <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 mb-2">No Recommendations Available</h3>
-            <p className="text-gray-600">
-              You may have completed all available courses, or there might be an issue with your transcript.
-            </p>
-          </div>
-        ) : (
-          <>
-            <div className="overflow-x-auto pb-4">
-              <div className="flex gap-6 min-w-min">
-                {visibleClasses.map((classData) => (
-                  <div
-                    key={classData.courseCode}
-                    className="flex-shrink-0 w-96 bg-white rounded-xl shadow-sm border border-gray-100 p-6"
-                  >
-                    <div className="mb-6 pb-4 border-b">
-                      <h3 className="text-xl font-bold text-gray-900 mb-1">{classData.courseCode}</h3>
-                      <p className="text-gray-600">{classData.courseName}</p>
-                      <p className="text-sm text-blue-600 mt-2 font-medium">
-                        {classData.professors.length} Professor{classData.professors.length !== 1 ? 's' : ''}
-                      </p>
+      ) : (
+        <>
+          <div className="overflow-x-auto pb-12 no-scrollbar">
+            <div className="flex gap-8 min-w-min px-2">
+              {visibleClasses.map((classData, index) => (
+                <motion.div
+                  key={classData.courseCode}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="flex-shrink-0 w-96 bg-white rounded-3xl shadow-xl shadow-[#001BB7]/5 border border-white overflow-hidden flex flex-col max-h-[80vh]"
+                >
+                  <div className="bg-[#F5F1DC]/30 px-6 py-5 border-b border-[#001BB7]/10 flex-shrink-0">
+                    <div className="flex justify-between items-center mb-1">
+                      <h3 className="text-xl font-bold text-[#001BB7]">{classData.courseCode}</h3>
+                      <span className="text-xs font-bold bg-[#0046FF]/10 text-[#0046FF] px-2 py-1 rounded-full border border-[#0046FF]/10">
+                          {classData.professors.length} Options
+                      </span>
                     </div>
-
-                    {/* NEW: Scrollable professor list with a fixed height */}
-                    <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
-                      {classData.professors.map((professor) => (
-                        <div
-                          key={professor.id}
-                          className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                        >
-                          <div className="flex items-start justify-between mb-3">
-                            <div>
-                              <h4 className="font-bold text-gray-900 mb-1">{professor.name}</h4>
-                              <div className="flex items-center gap-1">
-                                <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                                <span className="font-semibold text-gray-900">{professor.rating}</span>
-                                <span className="text-xs text-gray-500">({professor.reviewCount})</span>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="space-y-2 mb-3">
-                            <div className="flex items-start gap-2">
-                              <BookOpen className="w-3 h-3 text-gray-400 mt-1 flex-shrink-0" />
-                              <p className="text-xs text-gray-700">{professor.assessmentType}</p>
-                            </div>
-                            <div className="flex items-start gap-2">
-                              <Calendar className="w-3 h-3 text-gray-400 mt-1 flex-shrink-0" />
-                              <p className="text-xs text-gray-700">{professor.schedule}</p>
-                            </div>
-                            <div className="flex items-start gap-2">
-                              <Clock className="w-3 h-3 text-gray-400 mt-1 flex-shrink-0" />
-                              <p className="text-xs text-gray-700">{professor.attendance}</p>
-                            </div>
-                          </div>
-
-                          <div className="flex flex-wrap gap-1 mb-3">
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(
-                                professor.difficulty
-                              )}`}
-                            >
-                              {professor.difficulty}
-                            </span>
-                            {professor.tags.slice(0, 2).map((tag, index) => (
-                              <span key={index} className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-
-                          <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm">
-                            View Details
-                          </button>
-                        </div>
-                      ))}
-                    </div>
+                    <p className="text-[#001BB7]/60 font-medium text-sm truncate" title={classData.courseName}>
+                      {classData.courseName}
+                    </p>
                   </div>
-                ))}
-              </div>
-            </div>
 
-            <div className="text-center text-sm text-gray-500 mt-4">
-              ← Scroll to see more classes →
+                  <div className="overflow-y-auto p-4 space-y-4 custom-scrollbar flex-grow">
+                    {classData.professors.map((professor) => (
+                      <motion.div
+                        key={professor.id}
+                        whileHover={{ y: -2 }}
+                        className="border border-[#001BB7]/10 bg-white rounded-2xl p-5 hover:border-[#0046FF] hover:shadow-lg hover:shadow-[#0046FF]/5 transition-all group"
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="w-full">
+                            <h4 className="font-bold text-[#001BB7] text-lg leading-tight mb-2 truncate" title={professor.name}>
+                              {professor.name}
+                            </h4>
+                            
+                            <div className="flex items-center gap-2">
+                              <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-sm font-bold border ${professor.rating > 0 ? 'bg-[#FF8040]/10 text-[#FF8040] border-[#FF8040]/20' : 'bg-gray-100 text-gray-400 border-gray-200'}`}>
+                                <Star className={`w-3.5 h-3.5 ${professor.rating > 0 ? 'fill-[#FF8040] text-[#FF8040]' : 'text-gray-300'}`} />
+                                {professor.rating > 0 ? professor.rating : "N/A"}
+                              </div>
+
+                              <span className={`px-2 py-0.5 rounded-lg text-xs font-semibold border ${getDifficultyColor(professor.difficulty)}`}>
+                                Diff: {professor.difficulty}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2">
+                          {professor.tags && professor.tags.length > 0 ? (
+                              professor.tags.slice(0, 4).map((tag, i) => (
+                                  <span key={i} className={`px-2 py-1 rounded-md text-[11px] font-bold border ${getTagStyle(tag)}`}>
+                                      {tag}
+                                  </span>
+                              ))
+                          ) : (
+                              <span className="text-xs text-[#001BB7]/40 italic py-1">No attributes</span>
+                          )}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
             </div>
-          </>
-        )}
-      </div>
+          </div>
+          
+          <div className="text-center text-sm text-[#001BB7]/40 font-bold">
+              Scroll right for more classes →
+          </div>
+        </>
+      )}
     </div>
   );
 }
