@@ -1,5 +1,5 @@
 import React from 'react';
-import { UploadCloud, FileText, ArrowRight, ArrowLeft, CheckCircle, ExternalLink } from 'lucide-react';
+import { UploadCloud, FileText, ArrowRight, ArrowLeft, CheckCircle, ExternalLink, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface UploadScreenProps {
@@ -33,6 +33,16 @@ export default function UploadScreen({ file, department, onFileChange, setDepart
         <p className="text-white/60 mb-8 text-lg">
             {file ? "We are ready to analyze your courses." : "We need your unofficial transcript (PDF) to see what you've taken."}
         </p>
+
+        {/* Privacy Disclaimer */}
+        <div className="bg-emerald-500/10 rounded-xl p-4 mb-6 border border-emerald-500/30 text-left">
+            <h4 className="text-emerald-400 font-bold text-sm mb-1 flex items-center gap-2">
+                <Shield className="w-4 h-4" /> Your Privacy is Protected
+            </h4>
+            <p className="text-white/70 text-sm leading-relaxed">
+                Your transcript is processed locally in your browser. We do not store, upload, or share any personal information, grades, or academic records.
+            </p>
+        </div>
 
         <div className={`group relative border-2 border-dashed rounded-2xl p-10 mb-6 transition-all cursor-pointer 
           ${file 
