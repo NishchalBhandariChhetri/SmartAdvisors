@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Star, TrendingUp, BookOpen, Loader2, Sparkles, ArrowLeft, Trophy } from 'lucide-react';
+import { Star, TrendingUp, BookOpen, Loader2, Sparkles, ArrowLeft, Trophy, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 type PreferencesType = {
@@ -80,6 +80,11 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
     return 'bg-white/5 text-slate-300 border-white/10';
   };
 
+  // --- PRINT FUNCTION ---
+  const handlePrint = () => {
+    window.print();
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -94,12 +99,184 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
   return (
     <div className="max-w-7xl mx-auto">
       
-      <button 
-        onClick={onBack}
-        className="mb-6 flex items-center gap-2 text-white/60 hover:text-white transition-colors font-bold"
-      >
-        <ArrowLeft className="w-4 h-4" /> Back to Preferences
-      </button>
+      {/* --- PRINT STYLES (Forces Landscape & Horizontal Layout) --- */}
+      <style>{`
+        @media print {
+          @page { 
+            size: landscape; 
+            margin: 10mm; 
+          }
+
+          /* Reset everything for print */
+          * {
+            box-sizing: border-box !important;
+          }
+
+          body {
+            background: white !important;
+            color: black !important;
+          }
+
+          /* Hide all UI elements */
+          button, nav, .no-print,
+          .grid.grid-cols-1.md\\:grid-cols-2,
+          .text-center.text-sm.text-white {
+            display: none !important;
+          }
+
+          /* Main wrapper */
+          .max-w-7xl {
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+
+          /* Header */
+          .mb-10.text-center {
+            margin-bottom: 15px !important;
+          }
+
+          .mb-10.text-center * {
+            color: black !important;
+          }
+
+          /* Container for horizontal scroll */
+          .overflow-x-auto {
+            overflow: visible !important;
+            padding: 0 !important;
+          }
+
+          /* MAIN GRID: Classes in rows of 2 */
+          .flex.gap-8 {
+            display: grid !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 15px !important;
+            padding: 0 !important;
+          }
+
+          /* Individual class card */
+          .flex-shrink-0 {
+            width: 100% !important;
+            flex-shrink: 1 !important;
+            background: white !important;
+            border: 2px solid black !important;
+            border-radius: 8px !important;
+            overflow: hidden !important;
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+            max-height: none !important;
+          }
+
+          /* Class header */
+          .flex-shrink-0 > div:first-child {
+            background: #e8e8e8 !important;
+            border-bottom: 1px solid black !important;
+            padding: 10px !important;
+          }
+
+          .flex-shrink-0 > div:first-child h3,
+          .flex-shrink-0 > div:first-child p,
+          .flex-shrink-0 > div:first-child span {
+            color: black !important;
+            background: transparent !important;
+          }
+
+          /* Professor list container */
+          .overflow-y-auto {
+            overflow: visible !important;
+            max-height: none !important;
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px !important;
+            padding: 10px !important;
+          }
+
+          /* Individual professor card */
+          .overflow-y-auto > div {
+            background: white !important;
+            border: 1.5px solid #666 !important;
+            border-radius: 6px !important;
+            padding: 8px !important;
+            margin: 0 !important;
+            transform: none !important;
+            scale: 1 !important;
+          }
+
+          /* Remove trophy badge */
+          .overflow-y-auto > div > div.absolute {
+            display: none !important;
+          }
+
+          /* All text in professor cards */
+          .overflow-y-auto h4,
+          .overflow-y-auto span,
+          .overflow-y-auto div,
+          .overflow-y-auto p {
+            color: black !important;
+            background: transparent !important;
+            border-color: #999 !important;
+          }
+
+          /* Professor name */
+          .overflow-y-auto h4 {
+            font-size: 13px !important;
+            font-weight: bold !important;
+            margin-bottom: 4px !important;
+            white-space: normal !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+          }
+
+          /* Rating and difficulty badges */
+          .overflow-y-auto .flex.items-center span {
+            font-size: 10px !important;
+            padding: 2px 5px !important;
+            border: 1px solid #666 !important;
+            margin: 2px !important;
+          }
+
+          /* Tags */
+          .overflow-y-auto .flex.flex-wrap span {
+            font-size: 9px !important;
+            padding: 2px 5px !important;
+            border: 1px solid #999 !important;
+            margin: 2px !important;
+            background: white !important;
+          }
+
+          /* Icons - make small and simple */
+          svg {
+            width: 10px !important;
+            height: 10px !important;
+            stroke: black !important;
+            fill: none !important;
+          }
+
+          /* Hide framer-motion attributes */
+          [class*="motion"] {
+            animation: none !important;
+            transition: none !important;
+          }
+        }
+      `}</style>
+
+      {/* TOP CONTROLS */}
+      <div className="flex justify-between items-center mb-6 no-print">
+        <button 
+            onClick={onBack}
+            className="flex items-center gap-2 text-white/60 hover:text-white transition-colors font-bold"
+        >
+            <ArrowLeft className="w-4 h-4" /> Back to Preferences
+        </button>
+
+        {/* PRINT BUTTON */}
+        <button 
+            onClick={handlePrint}
+            className="flex items-center gap-2 bg-[#0046FF] hover:bg-[#0036CC] text-white px-4 py-2 rounded-xl shadow-lg transition-all font-bold"
+        >
+            <Download className="w-4 h-4" /> Save as PDF
+        </button>
+      </div>
 
       {/* HEADER */}
       <motion.div 
@@ -140,16 +317,16 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
           </div>
       ) : (
         <>
-          {/* HORIZONTAL CLASS SCROLL */}
+          {/* HORIZONTAL CLASS SCROLL (Main Screen) | HORIZONTAL GRID (Print) */}
           <div className="overflow-x-auto pb-12 no-scrollbar">
-            <div className="flex gap-8 min-w-min px-2">
+            <div className="flex gap-8 min-w-min px-2 print-horizontal-container">
               {visibleClasses.map((classData, index) => (
                 <motion.div
                   key={classData.courseCode}
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="flex-shrink-0 w-96 bg-black/20 backdrop-blur-md rounded-3xl shadow-xl border border-white/10 overflow-hidden flex flex-col max-h-[80vh]"
+                  className="flex-shrink-0 w-96 bg-black/20 backdrop-blur-md rounded-3xl shadow-xl border border-white/10 overflow-hidden flex flex-col max-h-[80vh] print-card"
                 >
                   {/* Class Header */}
                   <div className="bg-[#0046FF]/10 px-6 py-5 border-b border-white/10 flex-shrink-0">
@@ -165,7 +342,7 @@ export default function RecommendationDashboard({ userData, onBack }: Recommenda
                   </div>
 
                   {/* VERTICAL PROFESSOR LIST */}
-                  <div className="overflow-y-auto p-4 space-y-4 custom-scrollbar flex-grow">
+                  <div className="overflow-y-auto p-4 space-y-4 custom-scrollbar flex-grow print-prof-list">
                     {classData.professors.map((professor, profIndex) => {
                       const isBestMatch = profIndex === 0;
 
